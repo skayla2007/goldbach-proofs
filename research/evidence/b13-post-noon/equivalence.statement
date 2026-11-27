@@ -1,0 +1,511 @@
+  (let E := fun x : ℝ => Complex.exp (((2*Real.pi*x:ℝ):ℂ)*Complex.I); let S := fun (n : ℕ) (u : ℕ → ℝ) (t : ℝ) => Finset.sum (Finset.range (n+1)) (fun k => (u k:ℂ)*E ((k:ℝ)*t)); let Q := fun n : ℕ => (Nat.log 2 (n+2))^2; let Q₁ := fun n : ℕ => ⌊(n:ℝ)^(1/3:ℝ)⌋₊; let H := fun n : ℕ => 256 * Q₁ n * Q n; let wideArcs := fun n : ℕ => {t : ℝ | ∃ q a : ℕ, 1≤q ∧ q≤Q₁ n ∧ a≤q ∧ Nat.Coprime a q ∧ |t-(a:ℝ)/(q:ℝ)| ≤ (H n:ℝ)/((q:ℝ)*(n:ℝ))}; let Λ := ArithmeticFunction.vonMangoldt; let μ := fun d : ℕ => ((ArithmeticFunction.moebius d : ℤ) : ℝ); let U := fun n : ℕ => ⌊(n:ℝ)^(1/16:ℝ)⌋₊; let B₁ := fun n : ℕ => ⌊(n:ℝ)^(1/4:ℝ)⌋₊; let B₂ := fun n : ℕ => ⌊(n:ℝ)^(1/3:ℝ)⌋₊; let B₃ := fun n : ℕ => ⌊(n:ℝ)^(2/3:ℝ)⌋₊; let τ₁ := fun (n m : ℕ) => ∑ a ∈ (Nat.divisors m).filter (fun a => U n < a ∧ a ≤ B₁ n ∧ U n < m / a), (∑ d ∈ (Nat.divisors a).filter (fun d => U n < d), μ d) * Λ (m / a); let τ₃ := fun (n m : ℕ) => ∑ a ∈ (Nat.divisors m).filter (fun a => B₂ n < a ∧ a ≤ B₃ n ∧ U n < m / a), (∑ d ∈ (Nat.divisors a).filter (fun d => U n < d), μ d) * Λ (m / a); let Jdeep := fun (n : ℕ) (u v : ℕ → ℝ) => intervalIntegral (fun t => (wideArcs n)ᶜ.indicator (fun x => S n u x * S n v x * E (-(n:ℝ)*x)) t) (0:ℝ) 1 MeasureTheory.volume; ∀ e : ℝ, 0 < e → ∃ N : ℕ, ∀ n : ℕ, N ≤ n → Even n → ‖Jdeep n (τ₁ n) (τ₃ n)‖ ≤ e * (n : ℝ)) ↔
+  (let E := fun x : ℝ => Complex.exp (((2*Real.pi*x:ℝ):ℂ)*Complex.I)
+    let S := fun (n : ℕ) (u : ℕ → ℝ) (t : ℝ) => Finset.sum (Finset.range (n+1)) (fun k => (u k:ℂ)*E ((k:ℝ)*t))
+    let Q := fun n : ℕ => (Nat.log 2 (n+2))^2
+    let Q₁ := fun n : ℕ => ⌊(n:ℝ)^(1/3:ℝ)⌋₊
+    let H := fun n : ℕ => 256 * Q₁ n * Q n
+    let wideArcs := fun n : ℕ => {t : ℝ | ∃ q a : ℕ, 1≤q ∧ q≤Q₁ n ∧ a≤q ∧ Nat.Coprime a q ∧ |t-(a:ℝ)/(q:ℝ)| ≤ (H n:ℝ)/((q:ℝ)*(n:ℝ))}
+    let Λ := ArithmeticFunction.vonMangoldt
+    let μ := fun d : ℕ => ((ArithmeticFunction.moebius d : ℤ) : ℝ)
+    let U := fun n : ℕ => ⌊(n:ℝ)^(1/16:ℝ)⌋₊
+    let B₁ := fun n : ℕ => ⌊(n:ℝ)^(1/4:ℝ)⌋₊
+    let B₂ := fun n : ℕ => ⌊(n:ℝ)^(1/3:ℝ)⌋₊
+    let B₃ := fun n : ℕ => ⌊(n:ℝ)^(2/3:ℝ)⌋₊
+    let τ₁ := fun (n m : ℕ) => ∑ a ∈ (Nat.divisors m).filter (fun a => U n < a ∧ a ≤ B₁ n ∧ U n < m / a), (∑ d ∈ (Nat.divisors a).filter (fun d => U n < d), μ d) * Λ (m / a)
+    let τ₃ := fun (n m : ℕ) => ∑ a ∈ (Nat.divisors m).filter (fun a => B₂ n < a ∧ a ≤ B₃ n ∧ U n < m / a), (∑ d ∈ (Nat.divisors a).filter (fun d => U n < d), μ d) * Λ (m / a)
+    let Jdeep := fun (n : ℕ) (u v : ℕ → ℝ) => intervalIntegral (fun t => (wideArcs n)ᶜ.indicator (fun x => S n u x * S n v x * E (-(n:ℝ)*x)) t) (0:ℝ) 1 MeasureTheory.volume
+    let M := (ArithmeticFunction.moebius : ArithmeticFunction ℝ)
+    let PL := fun n : ℕ => ⌊(n : ℝ) ^ (1 / 96 : ℝ)⌋₊
+    let PR := fun n : ℕ => ⌊(n : ℝ) ^ (1 / 256 : ℝ)⌋₊
+    let K := fun n : ℕ => ⌊(n : ℝ) ^ (33 / 64 : ℝ)⌋₊
+    let Lcap := fun n : ℕ => ⌊(n : ℝ) ^ (3 / 10 : ℝ)⌋₊
+    let split := fun n : ℕ => ⌊(n : ℝ) ^ (7 / 12 : ℝ)⌋₊
+    let stepCap := fun n : ℕ => U n * ⌊(n : ℝ) ^ (111 / 256 : ℝ)⌋₊
+    let FPrime := fun (P m : ℕ) => ∑ x ∈ Nat.divisorsAntidiagonal m,
+      (M x.1 - (if x.1 ≤ P then M x.1 else 0)) *
+        @ite ℝ (P<x.2 ∧ x.2.Prime)
+          (@instDecidableAnd (P<x.2) x.2.Prime
+            (Nat.decLt P x.2) (Classical.propDecidable _))
+          (Λ x.2) 0
+    let u := fun i : ℕ × ℕ => i.1 * i.2
+    let vl := fun j : (Σ _ : ℕ, ℕ) => j.2 * j.1
+    let vh := fun j : (Σ _ : ℕ, ℕ × ℕ) => j.1 * j.2.1 * j.2.2
+    let X := fun n : ℕ => (((Finset.Ioc (U n) (B₁ n) ×ˢ Finset.Icc 1 n).filter (fun i => Lcap n < u i)).filter (fun i => u i ≤ n))
+    let Y := fun n : ℕ => (Finset.Ioc (U n) (min n (K n))).sigma (fun b => Finset.Icc 1 (min (U n) (n / b)))
+    let Z := fun n : ℕ => ((Finset.Icc 1 (U n)).sigma (fun d => Finset.Ioc (B₂ n / d) (min (split n / d) (n / (K n + 1) / d)) ×ˢ Finset.Icc 1 n)).filter (fun j => vh j ≤ n)
+    let geo := fun (g a b : ℕ) (t : ℝ) => ∑ s ∈ Finset.Ioc a b, E (((g * s : ℕ) : ℝ) * t)
+    let w := fun (n : ℕ) (i : ℕ × ℕ) => ((∑ d ∈ (Nat.divisors i.1).filter (fun d => U n < d), μ d : ℝ) : ℂ) * (FPrime (PL n) i.2 : ℂ)
+    let ramp := fun (m : ℕ) (r : ℤ) => ((m : ℝ)-1)/(2*(m : ℝ))-((r%(m : ℤ) : ℤ) : ℝ)/(m : ℝ)
+    let symmetric := fun (n u v p : ℕ) =>
+      let d := u.gcd v
+      let g := u/d
+      let h := v/d
+      let z : ℤ := (n/d : ℕ)
+      if d ∣ n ∧ v*p<n then
+        ramp h (z*Nat.gcdA g h-1)+ramp g (z*Nat.gcdA h g-p-1)
+      else 0
+    let countMain := fun (n u v p : ℕ) =>
+      let d := u.gcd v
+      let a := u/d
+      let b := v/d
+      let t := n/d
+      if d ∣ n ∧ v*p<n then
+        ((t : ℝ)-(b : ℝ)*p)/((a : ℝ)*b)-1/(2*(a : ℝ))-1/(2*(b : ℝ))
+      else 0
+    let integral := fun (n g h p : ℕ) =>
+      (symmetric n g h p : ℂ) + ((countMain n g h p : ℂ) -
+        intervalIntegral (fun x => (wideArcs n).indicator
+          (fun t => E (((-(n : ℤ)) : ℝ) * t) * (geo g 0 (n/g) t * geo h p (n/h) t)) x)
+          (0 : ℝ) 1 MeasureTheory.volume)
+    let lowExteriorWindow := fun (n g h : ℕ) =>
+      (symmetric n g h 0 : ℂ) +
+        ((if g.gcd h ∣ n ∧ 0 < n then
+            Complex.ofReal ((g.gcd h : ℝ)*((n : ℝ)/((g : ℝ)*(h : ℝ))-1/(2*(h : ℝ))))
+          else 0)-intervalIntegral (fun x => (wideArcs n).indicator
+          (fun t => E (((-(n : ℤ)) : ℝ) * t) * (geo g 0 (n/g) t * geo h 0 (n/h) t)) x)
+          (0 : ℝ) 1 MeasureTheory.volume)
+    let inverseRamp := fun (n u v : ℕ) =>
+      let d := u.gcd v
+      ramp (v/d) ((((n/d : ℕ) : ℤ)*Nat.gcdA (u/d) (v/d))-1)
+    let expandedCap := fun n : ℕ => ⌊(n : ℝ)^(511/768 : ℝ)⌋₊
+    let productCap := fun n : ℕ => 2*⌊(n : ℝ)^(4097/4096 : ℝ)⌋₊
+    let originalInside := fun (n u v : ℕ) =>
+      (((stepCap n^2 < u*v ∧ u.gcd v ≤ stepCap n) ∧ productCap n < u*v) ∧
+        ⌊(n : ℝ)^(8191/8192 : ℝ)⌋₊ < u*v ∧ u.gcd v ≤ ⌊(n : ℝ)^(1/4096 : ℝ)⌋₊ ∧
+        v.gcd n ≤ ⌊(n : ℝ)^(1/128 : ℝ)⌋₊) ∧ u.gcd n ≤ ⌊(n : ℝ)^(1/2048 : ℝ)⌋₊
+    let moved := fun (n u v : ℕ) => v ≤ ⌊(n : ℝ)^(515/1024 : ℝ)⌋₊ ∧ u*v ≤ 2*⌊(n : ℝ)^(513/512 : ℝ)⌋₊
+    let extended := fun n : ℕ => ⌊(n : ℝ)^(21/32 : ℝ)⌋₊
+    let modulusLow := fun n : ℕ => ⌊(n : ℝ)^(515/1024 : ℝ)⌋₊
+    let modulusMiddle := fun n : ℕ => ⌊(n : ℝ)^(133/256 : ℝ)⌋₊
+    let modulusWider := fun n : ℕ => ⌊(n : ℝ)^(535/1024 : ℝ)⌋₊
+    let widerProduct := fun n : ℕ => 2*⌊(n : ℝ)^(513/512 : ℝ)⌋₊
+    let belowTarget := fun (n v : ℕ) => v.gcd n ≤ ⌊(n : ℝ)^(1/2048 : ℝ)⌋₊
+    let between := fun (lo hi : ℕ → ℕ) (n u v : ℕ) =>
+      u ≤ extended n ∧ lo n < v ∧ v ≤ hi n ∧ u*v ≤ widerProduct n
+    let largeSquares := fun n : ℕ => (Finset.Icc 1 n).filter
+      (fun m => ∃ h ∈ Finset.Ioc ⌊(n : ℝ)^(1/768 : ℝ)⌋₊ n, h^2 ∣ m)
+    let squareFree := fun (n m : ℕ) => m ∉ largeSquares n
+    let keepLow := fun (n u v : ℕ) =>
+      (¬moved n u v ∧ ¬between modulusLow modulusMiddle n u v ∧ ¬between modulusMiddle modulusWider n u v) ∧
+        belowTarget n v
+    let keepHigh := fun (n u v : ℕ) =>
+      ((¬moved n u v ∧ belowTarget n v) ∧ ¬between modulusLow modulusMiddle n u v) ∧
+        ¬between modulusMiddle modulusWider n u v
+    let keepSquare := fun (keep : ℕ → ℕ → ℕ → Prop) (n u v : ℕ) =>
+      (keep n u v ∧ squareFree n u) ∧ squareFree n v
+    let inside := fun (keep : ℕ → ℕ → ℕ → Prop) (n u v : ℕ) => originalInside n u v ∧ keep n u v
+    let insideDecision := fun (keep : ℕ → ℕ → ℕ → Prop) (n u v : ℕ) => @instDecidableAnd
+      (originalInside n u v) (keep n u v) (Classical.propDecidable _) (Classical.propDecidable _)
+    let outside := fun (n u v : ℕ) =>
+      (stepCap n^2 < u*v ∧ u.gcd v ≤ min ⌊(n : ℝ)^(1/1024 : ℝ)⌋₊ (stepCap n)) ∧ ¬(u ≤ expandedCap n ∧ v ≤ expandedCap n)
+    let longLow := fun n : ℕ =>
+      @Finset.filter (Σ _ : ℕ, ℕ) (fun j => ¬vl j ≤ stepCap n)
+        (fun j => @instDecidableNot (vl j ≤ stepCap n) (Classical.propDecidable _))
+        ((Y n).filter (fun j => j.1.Prime ∧ ¬j.1 ∣ n))
+    let keepLowSquare := fun n u v => keepLow n u v ∧ squareFree n u
+    let narrowProduct := fun n : ℕ => 2*⌊(n : ℝ)^(1+3/8192 : ℝ)⌋₊
+    let near := fun (n : ℕ) (i : ℕ × ℕ) (v : ℕ) =>
+      modulusWider n < v ∧ u i ≤ extended n ∧ u i ≤ v ∧ u i*v ≤ narrowProduct n ∧
+        i.1 ≤ ⌊(n : ℝ)^((32 : ℝ)/256)⌋₊
+    let lowKept := fun (n g h : ℕ) =>
+      g ≤ expandedCap n ∧ ⌊(n : ℝ)^(27/64 : ℝ)⌋₊ < g ∧
+        originalInside n g h ∧ keepLow n g h ∧ squareFree n g
+    let insideLow := fun n : ℕ =>
+      ∑ i ∈ X n, ∑ j ∈ longLow n,
+        @ite ℂ (lowKept n (u i) (vl j)) (Classical.propDecidable _)
+          (w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*
+            (@ite ℂ (near n i (vl j) ∧ (u i).gcd (vl j) ∣ n)
+              (@instDecidableAnd (near n i (vl j)) ((u i).gcd (vl j) ∣ n)
+                (Classical.propDecidable _) (((u i).gcd (vl j)).decidable_dvd n))
+              (inverseRamp n (vl j) (u i) : ℂ) (symmetric n (u i) (vl j) 0 : ℂ))) 0
+    let longHigh := fun n : ℕ =>
+      @Finset.filter (Σ _ : ℕ, ℕ × ℕ) (fun j => ¬vh j ≤ stepCap n)
+        (fun j => @instDecidableNot (vh j ≤ stepCap n) (Classical.propDecidable _)) (Z n)
+    let insideHigh := fun n : ℕ =>
+      ∑ i ∈ (X n).filter (fun i => u i ≤ expandedCap n),
+      ∑ j ∈ (longHigh n).filter (fun j => vh j ≤ expandedCap n),
+        @ite ℂ (inside (keepSquare keepHigh) n (u i) (vh j)) (insideDecision (keepSquare keepHigh) n (u i) (vh j)) (w n i*((-(μ j.1 : ℂ))*(FPrime (PR n) j.2.2 : ℂ))*
+          (symmetric n (u i) (vh j) (K n/j.2.2) : ℂ)) 0
+    let targetCut := fun n : ℕ => ⌊(n : ℝ)^(1/2048 : ℝ)⌋₊
+    let clipTarget := fun {α : Type} (n : ℕ) (F : Finset α) (step : α → ℕ) =>
+      @Finset.filter α (fun i => (step i).gcd n ≤ targetCut n) (fun _ => Classical.propDecidable _) F
+    let clipSquare := fun {α : Type} (n : ℕ) (F : Finset α) (step : α → ℕ) =>
+      @Finset.filter α (fun i => squareFree n (step i)) (fun _ => Classical.propDecidable _) F
+    let outsideLow := fun n : ℕ =>
+      ∑ i ∈ (clipSquare n (clipTarget n (X n) u) u).filter (fun i => expandedCap n < u i),
+      ∑ j ∈ (longLow n).filter (fun j => j.2.gcd n ≤ targetCut n),
+        if stepCap n^2 < u i*vl j ∧ (u i).gcd (vl j) ≤ min ⌊(n : ℝ)^(1/1024 : ℝ)⌋₊ (stepCap n) then
+          w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*lowExteriorWindow n (u i) (vl j)
+        else 0
+    let outsideHigh := fun n : ℕ =>
+      ∑ i ∈ clipSquare n (clipTarget n (X n) u) u, ∑ j ∈ clipSquare n (clipTarget n (longHigh n) vh) vh,
+        @ite ℂ (outside n (u i) (vh j)) (Classical.propDecidable _) (w n i*((-(μ j.1 : ℂ))*(FPrime (PR n) j.2.2 : ℂ))*
+          integral n (u i) (vh j) (K n/j.2.2)) 0
+    let reverseExtra := fun (n g h q : ℕ) =>
+      g ≤ ⌊(n : ℝ)^(1/2 : ℝ)⌋₊ ∧ g ≤ extended n ∧ modulusWider n < h ∧ g ≤ h ∧
+        g*h ≤ narrowProduct n ∧ ⌊(n : ℝ)^(1/24 : ℝ)⌋₊ < q
+    let reverseCorrection := fun n : ℕ =>
+      ∑ i ∈ X n, ∑ j ∈ longLow n,
+        @ite ℂ (lowKept n (u i) (vl j) ∧ reverseExtra n (u i) (vl j) j.2 ∧ (u i).gcd (vl j) ∣ n)
+          (Classical.propDecidable _) (w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*
+            (inverseRamp n (vl j) (u i) : ℂ)) 0
+    let edge := fun n : ℕ => ⌊(n : ℝ)^(63/64 : ℝ)⌋₊
+    let C := fun (n g h : ℕ) => ((Finset.Icc 1 (n-1)).filter
+      (fun t => g ∣ t ∧ h ∣ n-t ∧ edge n < t ∧ edge n < n-t)).card
+    let diagonal := fun (n g h : ℕ) =>
+      g ≤ h+⌊(n : ℝ)^(2/5 : ℝ)⌋₊ ∧ h ≤ g+⌊(n : ℝ)^(2/5 : ℝ)⌋₊
+    let farCount := fun n : ℕ =>
+      ∑ i ∈ X n, ∑ j ∈ longLow n,
+        let g := u i
+        let h := vl j
+        @ite ℂ (lowKept n g h ∧ g.gcd h ∣ n ∧ ¬(g*h ≤ narrowProduct n)) (Classical.propDecidable _)
+          (w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*
+            (@ite ℂ (diagonal n g h) (Classical.propDecidable _) 0
+              (if g ≤ ⌊(n : ℝ)^(217/512 : ℝ)⌋₊ then 0 else
+                (C n g h : ℂ) - ((g.gcd h : ℝ)*((n : ℝ)/((g : ℝ)*(h : ℝ))) : ℂ)))) 0
+    let residual := fun n : ℕ => (farCount n + insideHigh n) + (outsideLow n + outsideHigh n)
+    let energy := fun n : ℕ => (‖residual n‖/(n : ℝ))^2
+    let mean := fun (n H : ℕ) =>
+      (∑ j ∈ Finset.range (H+1), energy (n+2*j))/((H+1 : ℕ) : ℝ)
+    ∀ e : ℝ, 0 < e → ∃ N : ℕ, ∀ n : ℕ, N ≤ n → Even n →
+      mean n n ≤ e) ∧
+  (let E := fun x : ℝ => Complex.exp (((2*Real.pi*x:ℝ):ℂ)*Complex.I)
+    let S := fun (n : ℕ) (u : ℕ → ℝ) (t : ℝ) => Finset.sum (Finset.range (n+1)) (fun k => (u k:ℂ)*E ((k:ℝ)*t))
+    let Q := fun n : ℕ => (Nat.log 2 (n+2))^2
+    let Q₁ := fun n : ℕ => ⌊(n:ℝ)^(1/3:ℝ)⌋₊
+    let H := fun n : ℕ => 256 * Q₁ n * Q n
+    let wideArcs := fun n : ℕ => {t : ℝ | ∃ q a : ℕ, 1≤q ∧ q≤Q₁ n ∧ a≤q ∧ Nat.Coprime a q ∧ |t-(a:ℝ)/(q:ℝ)| ≤ (H n:ℝ)/((q:ℝ)*(n:ℝ))}
+    let Λ := ArithmeticFunction.vonMangoldt
+    let μ := fun d : ℕ => ((ArithmeticFunction.moebius d : ℤ) : ℝ)
+    let U := fun n : ℕ => ⌊(n:ℝ)^(1/16:ℝ)⌋₊
+    let B₁ := fun n : ℕ => ⌊(n:ℝ)^(1/4:ℝ)⌋₊
+    let B₂ := fun n : ℕ => ⌊(n:ℝ)^(1/3:ℝ)⌋₊
+    let B₃ := fun n : ℕ => ⌊(n:ℝ)^(2/3:ℝ)⌋₊
+    let τ₁ := fun (n m : ℕ) => ∑ a ∈ (Nat.divisors m).filter (fun a => U n < a ∧ a ≤ B₁ n ∧ U n < m / a), (∑ d ∈ (Nat.divisors a).filter (fun d => U n < d), μ d) * Λ (m / a)
+    let τ₃ := fun (n m : ℕ) => ∑ a ∈ (Nat.divisors m).filter (fun a => B₂ n < a ∧ a ≤ B₃ n ∧ U n < m / a), (∑ d ∈ (Nat.divisors a).filter (fun d => U n < d), μ d) * Λ (m / a)
+    let Jdeep := fun (n : ℕ) (u v : ℕ → ℝ) => intervalIntegral (fun t => (wideArcs n)ᶜ.indicator (fun x => S n u x * S n v x * E (-(n:ℝ)*x)) t) (0:ℝ) 1 MeasureTheory.volume
+    let M := (ArithmeticFunction.moebius : ArithmeticFunction ℝ)
+    let PL := fun n : ℕ => ⌊(n : ℝ) ^ (1 / 96 : ℝ)⌋₊
+    let PR := fun n : ℕ => ⌊(n : ℝ) ^ (1 / 256 : ℝ)⌋₊
+    let K := fun n : ℕ => ⌊(n : ℝ) ^ (33 / 64 : ℝ)⌋₊
+    let Lcap := fun n : ℕ => ⌊(n : ℝ) ^ (3 / 10 : ℝ)⌋₊
+    let split := fun n : ℕ => ⌊(n : ℝ) ^ (7 / 12 : ℝ)⌋₊
+    let stepCap := fun n : ℕ => U n * ⌊(n : ℝ) ^ (111 / 256 : ℝ)⌋₊
+    let FPrime := fun (P m : ℕ) => ∑ x ∈ Nat.divisorsAntidiagonal m,
+      (M x.1 - (if x.1 ≤ P then M x.1 else 0)) *
+        @ite ℝ (P<x.2 ∧ x.2.Prime)
+          (@instDecidableAnd (P<x.2) x.2.Prime
+            (Nat.decLt P x.2) (Classical.propDecidable _))
+          (Λ x.2) 0
+    let u := fun i : ℕ × ℕ => i.1 * i.2
+    let vl := fun j : (Σ _ : ℕ, ℕ) => j.2 * j.1
+    let vh := fun j : (Σ _ : ℕ, ℕ × ℕ) => j.1 * j.2.1 * j.2.2
+    let X := fun n : ℕ => (((Finset.Ioc (U n) (B₁ n) ×ˢ Finset.Icc 1 n).filter (fun i => Lcap n < u i)).filter (fun i => u i ≤ n))
+    let Y := fun n : ℕ => (Finset.Ioc (U n) (min n (K n))).sigma (fun b => Finset.Icc 1 (min (U n) (n / b)))
+    let Z := fun n : ℕ => ((Finset.Icc 1 (U n)).sigma (fun d => Finset.Ioc (B₂ n / d) (min (split n / d) (n / (K n + 1) / d)) ×ˢ Finset.Icc 1 n)).filter (fun j => vh j ≤ n)
+    let geo := fun (g a b : ℕ) (t : ℝ) => ∑ s ∈ Finset.Ioc a b, E (((g * s : ℕ) : ℝ) * t)
+    let w := fun (n : ℕ) (i : ℕ × ℕ) => ((∑ d ∈ (Nat.divisors i.1).filter (fun d => U n < d), μ d : ℝ) : ℂ) * (FPrime (PL n) i.2 : ℂ)
+    let ramp := fun (m : ℕ) (r : ℤ) => ((m : ℝ)-1)/(2*(m : ℝ))-((r%(m : ℤ) : ℤ) : ℝ)/(m : ℝ)
+    let symmetric := fun (n u v p : ℕ) =>
+      let d := u.gcd v
+      let g := u/d
+      let h := v/d
+      let z : ℤ := (n/d : ℕ)
+      if d ∣ n ∧ v*p<n then
+        ramp h (z*Nat.gcdA g h-1)+ramp g (z*Nat.gcdA h g-p-1)
+      else 0
+    let countMain := fun (n u v p : ℕ) =>
+      let d := u.gcd v
+      let a := u/d
+      let b := v/d
+      let t := n/d
+      if d ∣ n ∧ v*p<n then
+        ((t : ℝ)-(b : ℝ)*p)/((a : ℝ)*b)-1/(2*(a : ℝ))-1/(2*(b : ℝ))
+      else 0
+    let integral := fun (n g h p : ℕ) =>
+      (symmetric n g h p : ℂ) + ((countMain n g h p : ℂ) -
+        intervalIntegral (fun x => (wideArcs n).indicator
+          (fun t => E (((-(n : ℤ)) : ℝ) * t) * (geo g 0 (n/g) t * geo h p (n/h) t)) x)
+          (0 : ℝ) 1 MeasureTheory.volume)
+    let lowExteriorWindow := fun (n g h : ℕ) =>
+      (symmetric n g h 0 : ℂ) +
+        ((if g.gcd h ∣ n ∧ 0 < n then
+            Complex.ofReal ((g.gcd h : ℝ)*((n : ℝ)/((g : ℝ)*(h : ℝ))-1/(2*(h : ℝ))))
+          else 0)-intervalIntegral (fun x => (wideArcs n).indicator
+          (fun t => E (((-(n : ℤ)) : ℝ) * t) * (geo g 0 (n/g) t * geo h 0 (n/h) t)) x)
+          (0 : ℝ) 1 MeasureTheory.volume)
+    let inverseRamp := fun (n u v : ℕ) =>
+      let d := u.gcd v
+      ramp (v/d) ((((n/d : ℕ) : ℤ)*Nat.gcdA (u/d) (v/d))-1)
+    let expandedCap := fun n : ℕ => ⌊(n : ℝ)^(511/768 : ℝ)⌋₊
+    let productCap := fun n : ℕ => 2*⌊(n : ℝ)^(4097/4096 : ℝ)⌋₊
+    let originalInside := fun (n u v : ℕ) =>
+      (((stepCap n^2 < u*v ∧ u.gcd v ≤ stepCap n) ∧ productCap n < u*v) ∧
+        ⌊(n : ℝ)^(8191/8192 : ℝ)⌋₊ < u*v ∧ u.gcd v ≤ ⌊(n : ℝ)^(1/4096 : ℝ)⌋₊ ∧
+        v.gcd n ≤ ⌊(n : ℝ)^(1/128 : ℝ)⌋₊) ∧ u.gcd n ≤ ⌊(n : ℝ)^(1/2048 : ℝ)⌋₊
+    let moved := fun (n u v : ℕ) => v ≤ ⌊(n : ℝ)^(515/1024 : ℝ)⌋₊ ∧ u*v ≤ 2*⌊(n : ℝ)^(513/512 : ℝ)⌋₊
+    let extended := fun n : ℕ => ⌊(n : ℝ)^(21/32 : ℝ)⌋₊
+    let modulusLow := fun n : ℕ => ⌊(n : ℝ)^(515/1024 : ℝ)⌋₊
+    let modulusMiddle := fun n : ℕ => ⌊(n : ℝ)^(133/256 : ℝ)⌋₊
+    let modulusWider := fun n : ℕ => ⌊(n : ℝ)^(535/1024 : ℝ)⌋₊
+    let widerProduct := fun n : ℕ => 2*⌊(n : ℝ)^(513/512 : ℝ)⌋₊
+    let belowTarget := fun (n v : ℕ) => v.gcd n ≤ ⌊(n : ℝ)^(1/2048 : ℝ)⌋₊
+    let between := fun (lo hi : ℕ → ℕ) (n u v : ℕ) =>
+      u ≤ extended n ∧ lo n < v ∧ v ≤ hi n ∧ u*v ≤ widerProduct n
+    let largeSquares := fun n : ℕ => (Finset.Icc 1 n).filter
+      (fun m => ∃ h ∈ Finset.Ioc ⌊(n : ℝ)^(1/768 : ℝ)⌋₊ n, h^2 ∣ m)
+    let squareFree := fun (n m : ℕ) => m ∉ largeSquares n
+    let keepLow := fun (n u v : ℕ) =>
+      (¬moved n u v ∧ ¬between modulusLow modulusMiddle n u v ∧ ¬between modulusMiddle modulusWider n u v) ∧
+        belowTarget n v
+    let keepHigh := fun (n u v : ℕ) =>
+      ((¬moved n u v ∧ belowTarget n v) ∧ ¬between modulusLow modulusMiddle n u v) ∧
+        ¬between modulusMiddle modulusWider n u v
+    let keepSquare := fun (keep : ℕ → ℕ → ℕ → Prop) (n u v : ℕ) =>
+      (keep n u v ∧ squareFree n u) ∧ squareFree n v
+    let inside := fun (keep : ℕ → ℕ → ℕ → Prop) (n u v : ℕ) => originalInside n u v ∧ keep n u v
+    let insideDecision := fun (keep : ℕ → ℕ → ℕ → Prop) (n u v : ℕ) => @instDecidableAnd
+      (originalInside n u v) (keep n u v) (Classical.propDecidable _) (Classical.propDecidable _)
+    let outside := fun (n u v : ℕ) =>
+      (stepCap n^2 < u*v ∧ u.gcd v ≤ min ⌊(n : ℝ)^(1/1024 : ℝ)⌋₊ (stepCap n)) ∧ ¬(u ≤ expandedCap n ∧ v ≤ expandedCap n)
+    let longLow := fun n : ℕ =>
+      @Finset.filter (Σ _ : ℕ, ℕ) (fun j => ¬vl j ≤ stepCap n)
+        (fun j => @instDecidableNot (vl j ≤ stepCap n) (Classical.propDecidable _))
+        ((Y n).filter (fun j => j.1.Prime ∧ ¬j.1 ∣ n))
+    let keepLowSquare := fun n u v => keepLow n u v ∧ squareFree n u
+    let narrowProduct := fun n : ℕ => 2*⌊(n : ℝ)^(1+3/8192 : ℝ)⌋₊
+    let near := fun (n : ℕ) (i : ℕ × ℕ) (v : ℕ) =>
+      modulusWider n < v ∧ u i ≤ extended n ∧ u i ≤ v ∧ u i*v ≤ narrowProduct n ∧
+        i.1 ≤ ⌊(n : ℝ)^((32 : ℝ)/256)⌋₊
+    let lowKept := fun (n g h : ℕ) =>
+      g ≤ expandedCap n ∧ ⌊(n : ℝ)^(27/64 : ℝ)⌋₊ < g ∧
+        originalInside n g h ∧ keepLow n g h ∧ squareFree n g
+    let insideLow := fun n : ℕ =>
+      ∑ i ∈ X n, ∑ j ∈ longLow n,
+        @ite ℂ (lowKept n (u i) (vl j)) (Classical.propDecidable _)
+          (w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*
+            (@ite ℂ (near n i (vl j) ∧ (u i).gcd (vl j) ∣ n)
+              (@instDecidableAnd (near n i (vl j)) ((u i).gcd (vl j) ∣ n)
+                (Classical.propDecidable _) (((u i).gcd (vl j)).decidable_dvd n))
+              (inverseRamp n (vl j) (u i) : ℂ) (symmetric n (u i) (vl j) 0 : ℂ))) 0
+    let longHigh := fun n : ℕ =>
+      @Finset.filter (Σ _ : ℕ, ℕ × ℕ) (fun j => ¬vh j ≤ stepCap n)
+        (fun j => @instDecidableNot (vh j ≤ stepCap n) (Classical.propDecidable _)) (Z n)
+    let insideHigh := fun n : ℕ =>
+      ∑ i ∈ (X n).filter (fun i => u i ≤ expandedCap n),
+      ∑ j ∈ (longHigh n).filter (fun j => vh j ≤ expandedCap n),
+        @ite ℂ (inside (keepSquare keepHigh) n (u i) (vh j)) (insideDecision (keepSquare keepHigh) n (u i) (vh j)) (w n i*((-(μ j.1 : ℂ))*(FPrime (PR n) j.2.2 : ℂ))*
+          (symmetric n (u i) (vh j) (K n/j.2.2) : ℂ)) 0
+    let targetCut := fun n : ℕ => ⌊(n : ℝ)^(1/2048 : ℝ)⌋₊
+    let clipTarget := fun {α : Type} (n : ℕ) (F : Finset α) (step : α → ℕ) =>
+      @Finset.filter α (fun i => (step i).gcd n ≤ targetCut n) (fun _ => Classical.propDecidable _) F
+    let clipSquare := fun {α : Type} (n : ℕ) (F : Finset α) (step : α → ℕ) =>
+      @Finset.filter α (fun i => squareFree n (step i)) (fun _ => Classical.propDecidable _) F
+    let outsideLow := fun n : ℕ =>
+      ∑ i ∈ (clipSquare n (clipTarget n (X n) u) u).filter (fun i => expandedCap n < u i),
+      ∑ j ∈ (longLow n).filter (fun j => j.2.gcd n ≤ targetCut n),
+        if stepCap n^2 < u i*vl j ∧ (u i).gcd (vl j) ≤ min ⌊(n : ℝ)^(1/1024 : ℝ)⌋₊ (stepCap n) then
+          w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*lowExteriorWindow n (u i) (vl j)
+        else 0
+    let outsideHigh := fun n : ℕ =>
+      ∑ i ∈ clipSquare n (clipTarget n (X n) u) u, ∑ j ∈ clipSquare n (clipTarget n (longHigh n) vh) vh,
+        @ite ℂ (outside n (u i) (vh j)) (Classical.propDecidable _) (w n i*((-(μ j.1 : ℂ))*(FPrime (PR n) j.2.2 : ℂ))*
+          integral n (u i) (vh j) (K n/j.2.2)) 0
+    let reverseExtra := fun (n g h q : ℕ) =>
+      g ≤ ⌊(n : ℝ)^(1/2 : ℝ)⌋₊ ∧ g ≤ extended n ∧ modulusWider n < h ∧ g ≤ h ∧
+        g*h ≤ narrowProduct n ∧ ⌊(n : ℝ)^(1/24 : ℝ)⌋₊ < q
+    let reverseCorrection := fun n : ℕ =>
+      ∑ i ∈ X n, ∑ j ∈ longLow n,
+        @ite ℂ (lowKept n (u i) (vl j) ∧ reverseExtra n (u i) (vl j) j.2 ∧ (u i).gcd (vl j) ∣ n)
+          (Classical.propDecidable _) (w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*
+            (inverseRamp n (vl j) (u i) : ℂ)) 0
+    let edge := fun n : ℕ => ⌊(n : ℝ)^(63/64 : ℝ)⌋₊
+    let C := fun (n g h : ℕ) => ((Finset.Icc 1 (n-1)).filter
+      (fun t => g ∣ t ∧ h ∣ n-t ∧ edge n < t ∧ edge n < n-t)).card
+    let diagonal := fun (n g h : ℕ) =>
+      g ≤ h+⌊(n : ℝ)^(2/5 : ℝ)⌋₊ ∧ h ≤ g+⌊(n : ℝ)^(2/5 : ℝ)⌋₊
+    let farCount := fun n : ℕ =>
+      ∑ i ∈ X n, ∑ j ∈ longLow n,
+        let g := u i
+        let h := vl j
+        @ite ℂ (lowKept n g h ∧ g.gcd h ∣ n ∧ ¬(g*h ≤ narrowProduct n)) (Classical.propDecidable _)
+          (w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*
+            (@ite ℂ (diagonal n g h) (Classical.propDecidable _) 0
+              (if g ≤ ⌊(n : ℝ)^(217/512 : ℝ)⌋₊ then 0 else
+                (C n g h : ℂ) - ((g.gcd h : ℝ)*((n : ℝ)/((g : ℝ)*(h : ℝ))) : ℂ)))) 0
+    let residual := fun n : ℕ => (farCount n + insideHigh n) + (outsideLow n + outsideHigh n)
+    let energy := fun n : ℕ => (‖residual n‖/(n : ℝ))^2
+    let mean := fun (n H : ℕ) =>
+      (∑ j ∈ Finset.range (H+1), energy (n+2*j))/((H+1 : ℕ) : ℝ)
+    ∀ e : ℝ, 0 < e → ∃ N : ℕ, ∀ n : ℕ, N ≤ n → Even n →
+      mean n n.sqrt ≤ mean n n + e) ∧
+  (let E := fun x : ℝ => Complex.exp (((2*Real.pi*x:ℝ):ℂ)*Complex.I)
+    let S := fun (n : ℕ) (u : ℕ → ℝ) (t : ℝ) => Finset.sum (Finset.range (n+1)) (fun k => (u k:ℂ)*E ((k:ℝ)*t))
+    let Q := fun n : ℕ => (Nat.log 2 (n+2))^2
+    let Q₁ := fun n : ℕ => ⌊(n:ℝ)^(1/3:ℝ)⌋₊
+    let H := fun n : ℕ => 256 * Q₁ n * Q n
+    let wideArcs := fun n : ℕ => {t : ℝ | ∃ q a : ℕ, 1≤q ∧ q≤Q₁ n ∧ a≤q ∧ Nat.Coprime a q ∧ |t-(a:ℝ)/(q:ℝ)| ≤ (H n:ℝ)/((q:ℝ)*(n:ℝ))}
+    let Λ := ArithmeticFunction.vonMangoldt
+    let μ := fun d : ℕ => ((ArithmeticFunction.moebius d : ℤ) : ℝ)
+    let U := fun n : ℕ => ⌊(n:ℝ)^(1/16:ℝ)⌋₊
+    let B₁ := fun n : ℕ => ⌊(n:ℝ)^(1/4:ℝ)⌋₊
+    let B₂ := fun n : ℕ => ⌊(n:ℝ)^(1/3:ℝ)⌋₊
+    let B₃ := fun n : ℕ => ⌊(n:ℝ)^(2/3:ℝ)⌋₊
+    let τ₁ := fun (n m : ℕ) => ∑ a ∈ (Nat.divisors m).filter (fun a => U n < a ∧ a ≤ B₁ n ∧ U n < m / a), (∑ d ∈ (Nat.divisors a).filter (fun d => U n < d), μ d) * Λ (m / a)
+    let τ₃ := fun (n m : ℕ) => ∑ a ∈ (Nat.divisors m).filter (fun a => B₂ n < a ∧ a ≤ B₃ n ∧ U n < m / a), (∑ d ∈ (Nat.divisors a).filter (fun d => U n < d), μ d) * Λ (m / a)
+    let Jdeep := fun (n : ℕ) (u v : ℕ → ℝ) => intervalIntegral (fun t => (wideArcs n)ᶜ.indicator (fun x => S n u x * S n v x * E (-(n:ℝ)*x)) t) (0:ℝ) 1 MeasureTheory.volume
+    let M := (ArithmeticFunction.moebius : ArithmeticFunction ℝ)
+    let PL := fun n : ℕ => ⌊(n : ℝ) ^ (1 / 96 : ℝ)⌋₊
+    let PR := fun n : ℕ => ⌊(n : ℝ) ^ (1 / 256 : ℝ)⌋₊
+    let K := fun n : ℕ => ⌊(n : ℝ) ^ (33 / 64 : ℝ)⌋₊
+    let Lcap := fun n : ℕ => ⌊(n : ℝ) ^ (3 / 10 : ℝ)⌋₊
+    let split := fun n : ℕ => ⌊(n : ℝ) ^ (7 / 12 : ℝ)⌋₊
+    let stepCap := fun n : ℕ => U n * ⌊(n : ℝ) ^ (111 / 256 : ℝ)⌋₊
+    let FPrime := fun (P m : ℕ) => ∑ x ∈ Nat.divisorsAntidiagonal m,
+      (M x.1 - (if x.1 ≤ P then M x.1 else 0)) *
+        @ite ℝ (P<x.2 ∧ x.2.Prime)
+          (@instDecidableAnd (P<x.2) x.2.Prime
+            (Nat.decLt P x.2) (Classical.propDecidable _))
+          (Λ x.2) 0
+    let u := fun i : ℕ × ℕ => i.1 * i.2
+    let vl := fun j : (Σ _ : ℕ, ℕ) => j.2 * j.1
+    let vh := fun j : (Σ _ : ℕ, ℕ × ℕ) => j.1 * j.2.1 * j.2.2
+    let X := fun n : ℕ => (((Finset.Ioc (U n) (B₁ n) ×ˢ Finset.Icc 1 n).filter (fun i => Lcap n < u i)).filter (fun i => u i ≤ n))
+    let Y := fun n : ℕ => (Finset.Ioc (U n) (min n (K n))).sigma (fun b => Finset.Icc 1 (min (U n) (n / b)))
+    let Z := fun n : ℕ => ((Finset.Icc 1 (U n)).sigma (fun d => Finset.Ioc (B₂ n / d) (min (split n / d) (n / (K n + 1) / d)) ×ˢ Finset.Icc 1 n)).filter (fun j => vh j ≤ n)
+    let geo := fun (g a b : ℕ) (t : ℝ) => ∑ s ∈ Finset.Ioc a b, E (((g * s : ℕ) : ℝ) * t)
+    let w := fun (n : ℕ) (i : ℕ × ℕ) => ((∑ d ∈ (Nat.divisors i.1).filter (fun d => U n < d), μ d : ℝ) : ℂ) * (FPrime (PL n) i.2 : ℂ)
+    let ramp := fun (m : ℕ) (r : ℤ) => ((m : ℝ)-1)/(2*(m : ℝ))-((r%(m : ℤ) : ℤ) : ℝ)/(m : ℝ)
+    let symmetric := fun (n u v p : ℕ) =>
+      let d := u.gcd v
+      let g := u/d
+      let h := v/d
+      let z : ℤ := (n/d : ℕ)
+      if d ∣ n ∧ v*p<n then
+        ramp h (z*Nat.gcdA g h-1)+ramp g (z*Nat.gcdA h g-p-1)
+      else 0
+    let countMain := fun (n u v p : ℕ) =>
+      let d := u.gcd v
+      let a := u/d
+      let b := v/d
+      let t := n/d
+      if d ∣ n ∧ v*p<n then
+        ((t : ℝ)-(b : ℝ)*p)/((a : ℝ)*b)-1/(2*(a : ℝ))-1/(2*(b : ℝ))
+      else 0
+    let integral := fun (n g h p : ℕ) =>
+      (symmetric n g h p : ℂ) + ((countMain n g h p : ℂ) -
+        intervalIntegral (fun x => (wideArcs n).indicator
+          (fun t => E (((-(n : ℤ)) : ℝ) * t) * (geo g 0 (n/g) t * geo h p (n/h) t)) x)
+          (0 : ℝ) 1 MeasureTheory.volume)
+    let lowExteriorWindow := fun (n g h : ℕ) =>
+      (symmetric n g h 0 : ℂ) +
+        ((if g.gcd h ∣ n ∧ 0 < n then
+            Complex.ofReal ((g.gcd h : ℝ)*((n : ℝ)/((g : ℝ)*(h : ℝ))-1/(2*(h : ℝ))))
+          else 0)-intervalIntegral (fun x => (wideArcs n).indicator
+          (fun t => E (((-(n : ℤ)) : ℝ) * t) * (geo g 0 (n/g) t * geo h 0 (n/h) t)) x)
+          (0 : ℝ) 1 MeasureTheory.volume)
+    let inverseRamp := fun (n u v : ℕ) =>
+      let d := u.gcd v
+      ramp (v/d) ((((n/d : ℕ) : ℤ)*Nat.gcdA (u/d) (v/d))-1)
+    let expandedCap := fun n : ℕ => ⌊(n : ℝ)^(511/768 : ℝ)⌋₊
+    let productCap := fun n : ℕ => 2*⌊(n : ℝ)^(4097/4096 : ℝ)⌋₊
+    let originalInside := fun (n u v : ℕ) =>
+      (((stepCap n^2 < u*v ∧ u.gcd v ≤ stepCap n) ∧ productCap n < u*v) ∧
+        ⌊(n : ℝ)^(8191/8192 : ℝ)⌋₊ < u*v ∧ u.gcd v ≤ ⌊(n : ℝ)^(1/4096 : ℝ)⌋₊ ∧
+        v.gcd n ≤ ⌊(n : ℝ)^(1/128 : ℝ)⌋₊) ∧ u.gcd n ≤ ⌊(n : ℝ)^(1/2048 : ℝ)⌋₊
+    let moved := fun (n u v : ℕ) => v ≤ ⌊(n : ℝ)^(515/1024 : ℝ)⌋₊ ∧ u*v ≤ 2*⌊(n : ℝ)^(513/512 : ℝ)⌋₊
+    let extended := fun n : ℕ => ⌊(n : ℝ)^(21/32 : ℝ)⌋₊
+    let modulusLow := fun n : ℕ => ⌊(n : ℝ)^(515/1024 : ℝ)⌋₊
+    let modulusMiddle := fun n : ℕ => ⌊(n : ℝ)^(133/256 : ℝ)⌋₊
+    let modulusWider := fun n : ℕ => ⌊(n : ℝ)^(535/1024 : ℝ)⌋₊
+    let widerProduct := fun n : ℕ => 2*⌊(n : ℝ)^(513/512 : ℝ)⌋₊
+    let belowTarget := fun (n v : ℕ) => v.gcd n ≤ ⌊(n : ℝ)^(1/2048 : ℝ)⌋₊
+    let between := fun (lo hi : ℕ → ℕ) (n u v : ℕ) =>
+      u ≤ extended n ∧ lo n < v ∧ v ≤ hi n ∧ u*v ≤ widerProduct n
+    let largeSquares := fun n : ℕ => (Finset.Icc 1 n).filter
+      (fun m => ∃ h ∈ Finset.Ioc ⌊(n : ℝ)^(1/768 : ℝ)⌋₊ n, h^2 ∣ m)
+    let squareFree := fun (n m : ℕ) => m ∉ largeSquares n
+    let keepLow := fun (n u v : ℕ) =>
+      (¬moved n u v ∧ ¬between modulusLow modulusMiddle n u v ∧ ¬between modulusMiddle modulusWider n u v) ∧
+        belowTarget n v
+    let keepHigh := fun (n u v : ℕ) =>
+      ((¬moved n u v ∧ belowTarget n v) ∧ ¬between modulusLow modulusMiddle n u v) ∧
+        ¬between modulusMiddle modulusWider n u v
+    let keepSquare := fun (keep : ℕ → ℕ → ℕ → Prop) (n u v : ℕ) =>
+      (keep n u v ∧ squareFree n u) ∧ squareFree n v
+    let inside := fun (keep : ℕ → ℕ → ℕ → Prop) (n u v : ℕ) => originalInside n u v ∧ keep n u v
+    let insideDecision := fun (keep : ℕ → ℕ → ℕ → Prop) (n u v : ℕ) => @instDecidableAnd
+      (originalInside n u v) (keep n u v) (Classical.propDecidable _) (Classical.propDecidable _)
+    let outside := fun (n u v : ℕ) =>
+      (stepCap n^2 < u*v ∧ u.gcd v ≤ min ⌊(n : ℝ)^(1/1024 : ℝ)⌋₊ (stepCap n)) ∧ ¬(u ≤ expandedCap n ∧ v ≤ expandedCap n)
+    let longLow := fun n : ℕ =>
+      @Finset.filter (Σ _ : ℕ, ℕ) (fun j => ¬vl j ≤ stepCap n)
+        (fun j => @instDecidableNot (vl j ≤ stepCap n) (Classical.propDecidable _))
+        ((Y n).filter (fun j => j.1.Prime ∧ ¬j.1 ∣ n))
+    let keepLowSquare := fun n u v => keepLow n u v ∧ squareFree n u
+    let narrowProduct := fun n : ℕ => 2*⌊(n : ℝ)^(1+3/8192 : ℝ)⌋₊
+    let near := fun (n : ℕ) (i : ℕ × ℕ) (v : ℕ) =>
+      modulusWider n < v ∧ u i ≤ extended n ∧ u i ≤ v ∧ u i*v ≤ narrowProduct n ∧
+        i.1 ≤ ⌊(n : ℝ)^((32 : ℝ)/256)⌋₊
+    let lowKept := fun (n g h : ℕ) =>
+      g ≤ expandedCap n ∧ ⌊(n : ℝ)^(27/64 : ℝ)⌋₊ < g ∧
+        originalInside n g h ∧ keepLow n g h ∧ squareFree n g
+    let insideLow := fun n : ℕ =>
+      ∑ i ∈ X n, ∑ j ∈ longLow n,
+        @ite ℂ (lowKept n (u i) (vl j)) (Classical.propDecidable _)
+          (w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*
+            (@ite ℂ (near n i (vl j) ∧ (u i).gcd (vl j) ∣ n)
+              (@instDecidableAnd (near n i (vl j)) ((u i).gcd (vl j) ∣ n)
+                (Classical.propDecidable _) (((u i).gcd (vl j)).decidable_dvd n))
+              (inverseRamp n (vl j) (u i) : ℂ) (symmetric n (u i) (vl j) 0 : ℂ))) 0
+    let longHigh := fun n : ℕ =>
+      @Finset.filter (Σ _ : ℕ, ℕ × ℕ) (fun j => ¬vh j ≤ stepCap n)
+        (fun j => @instDecidableNot (vh j ≤ stepCap n) (Classical.propDecidable _)) (Z n)
+    let insideHigh := fun n : ℕ =>
+      ∑ i ∈ (X n).filter (fun i => u i ≤ expandedCap n),
+      ∑ j ∈ (longHigh n).filter (fun j => vh j ≤ expandedCap n),
+        @ite ℂ (inside (keepSquare keepHigh) n (u i) (vh j)) (insideDecision (keepSquare keepHigh) n (u i) (vh j)) (w n i*((-(μ j.1 : ℂ))*(FPrime (PR n) j.2.2 : ℂ))*
+          (symmetric n (u i) (vh j) (K n/j.2.2) : ℂ)) 0
+    let targetCut := fun n : ℕ => ⌊(n : ℝ)^(1/2048 : ℝ)⌋₊
+    let clipTarget := fun {α : Type} (n : ℕ) (F : Finset α) (step : α → ℕ) =>
+      @Finset.filter α (fun i => (step i).gcd n ≤ targetCut n) (fun _ => Classical.propDecidable _) F
+    let clipSquare := fun {α : Type} (n : ℕ) (F : Finset α) (step : α → ℕ) =>
+      @Finset.filter α (fun i => squareFree n (step i)) (fun _ => Classical.propDecidable _) F
+    let outsideLow := fun n : ℕ =>
+      ∑ i ∈ (clipSquare n (clipTarget n (X n) u) u).filter (fun i => expandedCap n < u i),
+      ∑ j ∈ (longLow n).filter (fun j => j.2.gcd n ≤ targetCut n),
+        if stepCap n^2 < u i*vl j ∧ (u i).gcd (vl j) ≤ min ⌊(n : ℝ)^(1/1024 : ℝ)⌋₊ (stepCap n) then
+          w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*lowExteriorWindow n (u i) (vl j)
+        else 0
+    let outsideHigh := fun n : ℕ =>
+      ∑ i ∈ clipSquare n (clipTarget n (X n) u) u, ∑ j ∈ clipSquare n (clipTarget n (longHigh n) vh) vh,
+        @ite ℂ (outside n (u i) (vh j)) (Classical.propDecidable _) (w n i*((-(μ j.1 : ℂ))*(FPrime (PR n) j.2.2 : ℂ))*
+          integral n (u i) (vh j) (K n/j.2.2)) 0
+    let reverseExtra := fun (n g h q : ℕ) =>
+      g ≤ ⌊(n : ℝ)^(1/2 : ℝ)⌋₊ ∧ g ≤ extended n ∧ modulusWider n < h ∧ g ≤ h ∧
+        g*h ≤ narrowProduct n ∧ ⌊(n : ℝ)^(1/24 : ℝ)⌋₊ < q
+    let reverseCorrection := fun n : ℕ =>
+      ∑ i ∈ X n, ∑ j ∈ longLow n,
+        @ite ℂ (lowKept n (u i) (vl j) ∧ reverseExtra n (u i) (vl j) j.2 ∧ (u i).gcd (vl j) ∣ n)
+          (Classical.propDecidable _) (w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*
+            (inverseRamp n (vl j) (u i) : ℂ)) 0
+    let edge := fun n : ℕ => ⌊(n : ℝ)^(63/64 : ℝ)⌋₊
+    let C := fun (n g h : ℕ) => ((Finset.Icc 1 (n-1)).filter
+      (fun t => g ∣ t ∧ h ∣ n-t ∧ edge n < t ∧ edge n < n-t)).card
+    let diagonal := fun (n g h : ℕ) =>
+      g ≤ h+⌊(n : ℝ)^(2/5 : ℝ)⌋₊ ∧ h ≤ g+⌊(n : ℝ)^(2/5 : ℝ)⌋₊
+    let farCount := fun n : ℕ =>
+      ∑ i ∈ X n, ∑ j ∈ longLow n,
+        let g := u i
+        let h := vl j
+        @ite ℂ (lowKept n g h ∧ g.gcd h ∣ n ∧ ¬(g*h ≤ narrowProduct n)) (Classical.propDecidable _)
+          (w n i*((-(μ j.2 : ℂ))*(Λ j.1 : ℂ))*
+            (@ite ℂ (diagonal n g h) (Classical.propDecidable _) 0
+              (if g ≤ ⌊(n : ℝ)^(217/512 : ℝ)⌋₊ then 0 else
+                (C n g h : ℂ) - ((g.gcd h : ℝ)*((n : ℝ)/((g : ℝ)*(h : ℝ))) : ℂ)))) 0
+    let residual := fun n : ℕ => (farCount n + insideHigh n) + (outsideLow n + outsideHigh n)
+    let energy := fun n : ℕ => (‖residual n‖/(n : ℝ))^2
+    let mean := fun (n H : ℕ) =>
+      (∑ j ∈ Finset.range (H+1), energy (n+2*j))/((H+1 : ℕ) : ℝ)
+    ∀ e : ℝ, 0 < e → ∃ N : ℕ, ∀ n : ℕ, N ≤ n → Even n →
+      energy n ≤ mean n n.sqrt + e)
